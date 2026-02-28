@@ -18,6 +18,7 @@ export default function Home() {
   const [pendingCommand, setPendingCommand] = useState<string | null>(null);
   const [audioLevel, setAudioLevel] = useState(0);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'online' | 'error'>('connecting');
+  const [screenTimestamp, setScreenTimestamp] = useState<number>(Date.now());
   const scrollRef = useRef<HTMLDivElement>(null);
   const audioContext = useRef<AudioContext | null>(null);
   const analyser = useRef<AnalyserNode | null>(null);
@@ -73,8 +74,14 @@ export default function Home() {
       })
       .subscribe();
 
+    // 4. Live Screen Update Interval
+    const screenInterval = setInterval(() => {
+      setScreenTimestamp(Date.now());
+    }, 2500); // Update every 2.5 seconds to bypass cache
+
     return () => {
       channel.unsubscribe();
+      clearInterval(screenInterval);
     };
   }, []);
 
@@ -199,13 +206,31 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Interaction Logs */}
+      {/* Interaction Logs & Live Screen */}
       <main
         ref={scrollRef}
         className="relative z-10 flex-1 overflow-y-auto px-6 py-8 space-y-8 scroll-smooth"
       >
+        {/* Live PC Screen Monitor */}
+        <div className="relative group max-w-4xl mx-auto rounded-[32px] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] bg-black/40 backdrop-blur-md">
+          <div className="absolute top-4 left-6 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white">LIVE MONITOR</span>
+          </div>
+          <img
+            key={screenTimestamp}
+            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/screen-streams/${SESSION_ID}/live.jpg?t=${screenTimestamp}`}
+            alt="PC Screen Live"
+            className="w-full h-auto aspect-video object-cover transition-opacity duration-700 ease-in-out opacity-0"
+            onLoad={(e) => (e.currentTarget.style.opacity = '1')}
+            onError={(e) => (e.currentTarget.style.display = 'none')}
+          />
+          {/* Scanline Effect */}
+          <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,3px_100%] opacity-30"></div>
+        </div>
+
         {logs.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full space-y-4 opacity-20">
+          <div className="flex flex-col items-center justify-center space-y-4 opacity-20 py-10">
             <ShieldCheck size={64} strokeWidth={1} />
             <p className="text-center font-light tracking-widest text-sm italic">READY FOR VOICE INPUT</p>
           </div>
