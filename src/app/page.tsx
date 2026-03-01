@@ -12,6 +12,8 @@ interface LogEntry {
 }
 
 export default function Home() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pin, setPin] = useState('');
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
@@ -23,7 +25,22 @@ export default function Home() {
   const audioContext = useRef<AudioContext | null>(null);
   const analyser = useRef<AnalyserNode | null>(null);
 
+  const CORRECT_PIN = process.env.NEXT_PUBLIC_ACCESS_PIN || '720916'; // Default or from Env
+
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pin === CORRECT_PIN) {
+      setIsAuthenticated(true);
+      speak("보안 인증이 완료되었습니다. 시스템을 연결합니다.");
+    } else {
+      alert("비밀번호가 틀렸습니다.");
+      setPin('');
+    }
+  };
+
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     // 1. Initialize Web Speech API
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -163,8 +180,55 @@ export default function Home() {
     }
   };
 
+  // 1. Render Security Gate if Not Authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-[#020205] text-[#e0e0f0]">
+        <div className="fixed inset-0 pointer-events-none opacity-20">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-800 rounded-full blur-[120px]"></div>
+        </div>
+
+        <div className="relative z-10 w-full max-w-md p-8 space-y-8 bg-white/5 backdrop-blur-2xl rounded-[32px] border border-white/10 shadow-2xl text-center">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-400 to-indigo-600 flex items-center justify-center shadow-lg">
+              <ShieldCheck size={36} className="text-white" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-black uppercase tracking-widest text-white italic">Security <span className="text-cyan-400">Gate</span></h1>
+          <p className="text-sm text-gray-400">Please enter your 6-digit access key to establish the bridge link.</p>
+
+          <form onSubmit={handlePinSubmit} className="space-y-6">
+            <input
+              type="password"
+              maxLength={6}
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              className="w-full text-center text-4xl font-black tracking-[1em] py-4 bg-black/40 border border-white/10 rounded-2xl focus:outline-none focus:border-cyan-500/50 transition-all text-white placeholder-gray-700"
+              placeholder="••••••"
+              autoFocus
+            />
+            <button
+              type="submit"
+              className="w-full py-4 bg-gradient-to-r from-cyan-400 to-indigo-600 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+            >
+              Access System
+            </button>
+          </form>
+
+          <div className="flex items-center justify-center gap-2 opacity-30">
+            <Activity size={12} className="text-cyan-400" />
+            <span className="text-[10px] font-mono tracking-widest uppercase">Encrypted Link Standard V2</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Main Bridge OS UI
   return (
     <div className="flex flex-col h-screen bg-[#020205] text-[#e0e0f0] font-sans selection:bg-cyan-500/30 overflow-hidden">
+      {/* ... previous content remained same ... */}
       {/* Dynamic Background Mesh */}
       <div className="fixed inset-0 pointer-events-none opacity-20">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[120px]"></div>
