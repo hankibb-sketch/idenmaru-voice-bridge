@@ -316,12 +316,39 @@ export default function Home() {
           <div className="absolute inset-0 pointer-events-none border-[12px] border-white/10 rounded-[40px]"></div>
         </div>
 
-        {logs.length === 0 && (
-          <div className="flex flex-col items-center justify-center space-y-4 opacity-30 py-16">
-            <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-lg mb-4">
-              <ShieldCheck size={48} className="text-blue-500" strokeWidth={1.5} />
+        {/* System Capabilities Quick Guide */}
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
+          {[
+            { icon: <Terminal size={18} />, label: "WEB SEARCH", desc: "네이버에서 검색해줘", color: "text-blue-500", bg: "bg-blue-50" },
+            { icon: <Activity size={18} />, label: "SCREEN AI", desc: "이 화면 분석해줘", color: "text-indigo-500", bg: "bg-indigo-50" },
+            { icon: <Zap size={18} />, label: "APP CONTROL", desc: "엑셀 실행해줘", color: "text-amber-500", bg: "bg-amber-50" },
+            { icon: <Mic size={18} />, label: "MEDIA LINK", desc: "유튜브에서 뉴스 틀어줘", color: "text-red-500", bg: "bg-red-50" },
+          ].map((feat, i) => (
+            <div
+              key={i}
+              onClick={() => {
+                setTextCommand(feat.desc);
+                speak(`${feat.label} 모드입니다. 우측 전송 버튼을 누르면 실행됩니다.`);
+              }}
+              className="flex flex-col gap-3 p-5 rounded-[28px] bg-white border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer group"
+            >
+              <div className={`w-10 h-10 rounded-2xl ${feat.bg} ${feat.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                {feat.icon}
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-black tracking-widest text-gray-400 uppercase">{feat.label}</span>
+                <p className="text-[12px] font-bold text-gray-700 leading-tight">"{feat.desc}"</p>
+              </div>
             </div>
-            <p className="text-center font-bold tracking-[0.2em] text-sm text-gray-500 uppercase italic">Initialized & Ready</p>
+          ))}
+        </div>
+
+        {logs.length === 0 && (
+          <div className="flex flex-col items-center justify-center space-y-4 opacity-30 py-10">
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm mb-2">
+              <ShieldCheck size={32} className="text-blue-500" strokeWidth={1.5} />
+            </div>
+            <p className="text-center font-bold tracking-[0.2em] text-[10px] text-gray-400 uppercase italic">Initialized & Ready</p>
           </div>
         )}
 
