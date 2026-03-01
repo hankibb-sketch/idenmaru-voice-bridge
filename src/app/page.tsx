@@ -13,7 +13,8 @@ interface LogEntry {
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [pin, setPin] = useState('');
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
@@ -25,16 +26,16 @@ export default function Home() {
   const audioContext = useRef<AudioContext | null>(null);
   const analyser = useRef<AnalyserNode | null>(null);
 
-  const CORRECT_PIN = process.env.NEXT_PUBLIC_ACCESS_PIN || '720916'; // Default or from Env
+  const CORRECT_ID = process.env.NEXT_PUBLIC_AUTH_ID || 'hankbbb@gmail.com';
+  const CORRECT_PASS = process.env.NEXT_PUBLIC_AUTH_PASS || 'gksrlqja72@';
 
-  const handlePinSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === CORRECT_PIN) {
+    if (userId === CORRECT_ID && password === CORRECT_PASS) {
       setIsAuthenticated(true);
-      speak("보안 인증이 완료되었습니다. 시스템을 연결합니다.");
+      speak("인증되었습니다. 이든마루 시스템 링크를 시작합니다.");
     } else {
-      alert("비밀번호가 틀렸습니다.");
-      setPin('');
+      alert("ID 또는 비밀번호가 올바르지 않습니다.");
     }
   };
 
@@ -189,36 +190,56 @@ export default function Home() {
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-800 rounded-full blur-[120px]"></div>
         </div>
 
-        <div className="relative z-10 w-full max-w-md p-8 space-y-8 bg-white/5 backdrop-blur-2xl rounded-[32px] border border-white/10 shadow-2xl text-center">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-400 to-indigo-600 flex items-center justify-center shadow-lg">
-              <ShieldCheck size={36} className="text-white" />
+        <div className="relative z-10 w-full max-w-md p-10 space-y-8 bg-white/5 backdrop-blur-3xl rounded-[40px] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] text-center">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-[28px] bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_40px_rgba(34,211,238,0.3)]">
+              <ShieldCheck size={44} className="text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-black uppercase tracking-widest text-white italic">Security <span className="text-cyan-400">Gate</span></h1>
-          <p className="text-sm text-gray-400">Please enter your 6-digit access key to establish the bridge link.</p>
 
-          <form onSubmit={handlePinSubmit} className="space-y-6">
-            <input
-              type="password"
-              maxLength={6}
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              className="w-full text-center text-4xl font-black tracking-[1em] py-4 bg-black/40 border border-white/10 rounded-2xl focus:outline-none focus:border-cyan-500/50 transition-all text-white placeholder-gray-700"
-              placeholder="••••••"
-              autoFocus
-            />
+          <div className="space-y-2">
+            <h1 className="text-3xl font-black uppercase tracking-tighter text-white italic">
+              Bridge <span className="text-cyan-400">Auth</span>
+            </h1>
+            <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-gray-500">Secure Access Point V3.1</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4 text-left">
+            <div className="space-y-3">
+              <div className="relative group">
+                <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-cyan-400 transition-colors" />
+                <input
+                  type="text"
+                  placeholder="ID (EMAIL)"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                  className="w-full pl-12 pr-6 py-4 bg-black/40 border border-white/10 rounded-2xl focus:outline-none focus:border-cyan-500/50 transition-all text-white font-mono text-sm tracking-widest placeholder-gray-700"
+                  autoFocus
+                />
+              </div>
+              <div className="relative group">
+                <Zap size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                <input
+                  type="password"
+                  placeholder="PASSWORD"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-12 pr-6 py-4 bg-black/40 border border-white/10 rounded-2xl focus:outline-none focus:border-indigo-500/50 transition-all text-white font-mono text-sm tracking-widest placeholder-gray-700"
+                />
+              </div>
+            </div>
+
             <button
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-cyan-400 to-indigo-600 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+              className="w-full py-5 bg-gradient-to-r from-cyan-500 to-indigo-600 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-cyan-900/40"
             >
-              Access System
+              System Access
             </button>
           </form>
 
-          <div className="flex items-center justify-center gap-2 opacity-30">
+          <div className="flex items-center justify-center gap-2 opacity-20">
             <Activity size={12} className="text-cyan-400" />
-            <span className="text-[10px] font-mono tracking-widest uppercase">Encrypted Link Standard V2</span>
+            <span className="text-[9px] font-mono tracking-[0.4em] uppercase">Protocol: IDENMARU-OS-RECOGNITION</span>
           </div>
         </div>
       </div>
