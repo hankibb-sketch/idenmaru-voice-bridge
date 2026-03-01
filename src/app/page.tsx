@@ -15,6 +15,7 @@ export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
+  const [textCommand, setTextCommand] = useState('');
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
@@ -387,6 +388,41 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* Text Command Input Bar */}
+        <div className="w-full max-w-2xl mx-auto mb-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (textCommand.trim()) {
+                executeCommand(textCommand);
+                setTextCommand('');
+              }
+            }}
+            className="relative group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 rounded-2xl blur-xl group-focus-within:opacity-100 opacity-0 transition-opacity duration-500"></div>
+            <div className="relative flex items-center bg-[#0A0A1F]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl overflow-hidden group-focus-within:border-cyan-500/50 transition-all">
+              <div className="pl-4 flex items-center justify-center text-gray-500 group-focus-within:text-cyan-400">
+                <Terminal size={18} />
+              </div>
+              <input
+                type="text"
+                value={textCommand}
+                onChange={(e) => setTextCommand(e.target.value)}
+                placeholder="컴퓨터에게 명령어를 입력하세요..."
+                className="flex-1 bg-transparent border-none py-4 px-4 text-white placeholder-gray-600 focus:outline-none text-sm tracking-wide"
+              />
+              <button
+                type="submit"
+                disabled={!textCommand.trim()}
+                className={`p-3 rounded-xl transition-all ${textCommand.trim() ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-900/40 hover:scale-105 active:scale-95' : 'bg-white/5 text-gray-700'}`}
+              >
+                <Send size={18} />
+              </button>
+            </div>
+          </form>
+        </div>
 
         {/* Massive Main Voice Button */}
         <div className="flex flex-col items-center gap-6">
