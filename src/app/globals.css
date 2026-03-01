@@ -1,17 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  --background: #0a0a0b;
-  --foreground: #f0f0f2;
+  --background: #f8f9fa;
+  --foreground: #202124;
+  --sidebar: #f8f9fa;
+  --card: #ffffff;
+  --border: #dadce0;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .glass {
@@ -31,8 +33,14 @@ body {
 
 /* Animations */
 @keyframes pulse-ring {
-  0% { transform: scale(.33); }
-  80%, 100% { opacity: 0; }
+  0% {
+    transform: scale(.33);
+  }
+
+  80%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .animate-pulse-ring::before {
