@@ -13,7 +13,6 @@ interface LogEntry {
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [textCommand, setTextCommand] = useState('');
   const [isComposing, setIsComposing] = useState(false);
@@ -33,11 +32,11 @@ export default function Home() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (userId === CORRECT_ID && password === CORRECT_PASS) {
+    if (password === CORRECT_PASS) {
       setIsAuthenticated(true);
       speak("인증되었습니다. 이든마루 시스템 링크를 시작합니다.");
     } else {
-      alert("ID 또는 비밀번호가 올바르지 않습니다.");
+      alert("비밀번호가 올바르지 않습니다.");
     }
   };
 
@@ -210,24 +209,14 @@ export default function Home() {
           <form onSubmit={handleLogin} className="space-y-4 text-left">
             <div className="space-y-3">
               <div className="relative group">
-                <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                <input
-                  type="text"
-                  placeholder="ID (EMAIL)"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 bg-gray-50/50 border border-gray-200 rounded-3xl focus:outline-none focus:border-blue-400 focus:bg-white transition-all text-gray-800 font-medium text-sm tracking-wide placeholder-gray-400 shadow-sm"
-                  autoFocus
-                />
-              </div>
-              <div className="relative group">
-                <Zap size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
+                <Zap size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                 <input
                   type="password"
-                  placeholder="PASSWORD"
+                  placeholder="ENTER ACCESS KEY"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 bg-gray-50/50 border border-gray-200 rounded-3xl focus:outline-none focus:border-indigo-400 focus:bg-white transition-all text-gray-800 font-medium text-sm tracking-wide placeholder-gray-400 shadow-sm"
+                  className="w-full pl-12 pr-6 py-4 bg-gray-50/50 border border-gray-200 rounded-3xl focus:outline-none focus:border-blue-400 focus:bg-white transition-all text-gray-800 font-medium text-sm tracking-wide placeholder-gray-400 shadow-sm"
+                  autoFocus
                 />
               </div>
             </div>
